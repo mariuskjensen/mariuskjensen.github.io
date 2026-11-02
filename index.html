@@ -1,0 +1,630 @@
+<title>Rulleøkt</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow column (handlebar phone), three tabs, a full-screen ride view on top. */
+:root{
+  --bg:#eef0ee; --surface:#ffffff; --sunk:#e3e7e4; --fg:#16201b; --muted:#5d6b63; --line:#cfd6d1;
+  --accent:#3f9a2f; --accent-ink:#ffffff; --warn:#b4600c; --bad:#b3261e;
+  --z1:#8a9a92; --z2:#3b7fc4; --z3:#3f9a2f; --z4:#d9a400; --z5:#e06a14; --z6:#c7302b;
+  --display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1311; --surface:#18201c; --sunk:#0b0e0c; --fg:#e7eee9; --muted:#93a39a; --line:#2a352f;
+  --accent:#7ccf3f; --accent-ink:#0d1a07; --warn:#f0a246; --bad:#ff7a70;
+  --z1:#7d8c84; --z2:#5aa0e6; --z3:#7ccf3f; --z4:#f2c230; --z5:#f58a3c; --z6:#ff5a50; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1311; --surface:#18201c; --sunk:#0b0e0c; --fg:#e7eee9; --muted:#93a39a; --line:#2a352f;
+  --accent:#7ccf3f; --accent-ink:#0d1a07; --warn:#f0a246; --bad:#ff7a70;
+  --z1:#7d8c84; --z2:#5aa0e6; --z3:#7ccf3f; --z4:#f2c230; --z5:#f58a3c; --z6:#ff5a50; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1{font-size:28px}h2{font-size:21px}h3{font-size:17px}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:99px;background:var(--sunk);font-size:13px;font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.on .dot{background:var(--accent)} .pill.demo .dot{background:var(--warn)}
+nav.tabs{display:grid;grid-template-columns:repeat(3,1fr);background:var(--sunk);border-radius:var(--r);padding:4px;gap:4px}
+nav.tabs button{border:0;background:transparent;color:var(--muted);font:600 15px var(--body);padding:9px 4px;border-radius:7px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+section.panel{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spread{justify-content:space-between}
+button.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:600 15px var(--body);padding:11px 16px;border-radius:9px;cursor:pointer;min-height:44px}
+button.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.btn.ghost{background:transparent}
+button.btn.danger{color:var(--bad)}
+button.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.metric{background:var(--sunk);border-radius:8px;padding:8px 6px;text-align:center;min-width:0}
+.metric .v{font-size:30px;font-weight:600;line-height:1.05}
+.metric .u{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--sunk);padding:4px;border-radius:9px}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 14px var(--body);padding:8px 2px;border-radius:6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg)}
+.dial{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px}
+.dial button{height:56px;font:600 26px var(--display);border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.dial .val{text-align:center}
+.dial .val .num{font-size:44px;font-weight:700;line-height:1}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=number],input[type=text]{font:500 16px var(--body);padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);width:100%}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.note{font-size:13px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+.warnbox{font-size:14px;background:color-mix(in srgb,var(--warn) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 40%,var(--line));border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.wlist{display:flex;flex-direction:column;gap:10px}
+.wk{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.wk .meta{display:flex;gap:12px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+svg.prof{width:100%;height:56px;display:block;background:var(--sunk);border-radius:6px}
+.zones{display:flex;gap:6px;flex-wrap:wrap;font-size:12px}
+.zones span{display:inline-flex;align-items:center;gap:5px}
+.zones i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.week{display:flex;flex-direction:column;gap:8px}
+.session{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-radius:9px;background:var(--surface);border:1px solid var(--line)}
+.session input{width:22px;height:22px;accent-color:var(--accent)}
+.session.done .t{text-decoration:line-through;color:var(--muted)}
+.steps{display:flex;flex-direction:column;gap:6px}
+.step{display:grid;grid-template-columns:1fr 1fr 40px;gap:8px;align-items:end}
+table.hist{width:100%;border-collapse:collapse;font-size:14px}
+table.hist td,table.hist th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left}
+table.hist th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+table.hist td.r,table.hist th.r{text-align:right;font-variant-numeric:tabular-nums}
+.tablewrap{overflow-x:auto}
+details summary{cursor:pointer;font-weight:600}
+details[open] summary{margin-bottom:8px}
+/* Ride view */
+#ride{position:fixed;inset:0;background:var(--bg);z-index:20;overflow-y:auto;
+  padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#ride .wrap{gap:12px}
+.big{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.big .metric .v{font-size:56px}
+.big .metric.target{background:color-mix(in srgb,var(--zc,var(--accent)) 22%,var(--sunk))}
+.stepbar{display:flex;flex-direction:column;gap:4px}
+.stepname{font-family:var(--display);font-size:22px;font-weight:600}
+.prog{height:8px;background:var(--sunk);border-radius:99px;overflow:hidden}
+.prog>i{display:block;height:100%;background:var(--zc,var(--accent));width:0}
+svg.rideprof{width:100%;height:110px;display:block;background:var(--sunk);border-radius:8px}
+.ctrl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.adj{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.adj button{min-width:56px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:9px;font-size:14px;z-index:40;max-width:90%}
+@media (max-width:380px){.metric .v{font-size:24px}.big .metric .v{font-size:46px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <h1>Rulleøkt</h1>
+    <span class="pill" id="connPill"><span class="dot"></span><span id="connText">Ikke tilkoblet</span></span>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-rulle" aria-selected="true" data-tab="rulle">Rulle</button>
+    <button role="tab" id="tab-okter" aria-selected="false" data-tab="okter">Økter</button>
+    <button role="tab" id="tab-plan" aria-selected="false" data-tab="plan">Plan</button>
+  </nav>
+
+  <!-- RULLE -->
+  <section class="panel" id="p-rulle">
+    <div class="warnbox" id="noBt" hidden>
+      <strong>Denne nettleseren kan ikke snakke Bluetooth.</strong>
+      <span>Safari og Chrome på iPhone mangler Web Bluetooth. Åpne siden i appen Bluefy fra App Store. Siden må ligge på en https-adresse.</span>
+      <span>Du kan prøve alt annet i demomodus.</span>
+    </div>
+    <div class="card">
+      <div class="row spread">
+        <h2>Tilkobling</h2>
+        <span class="small muted" id="devName">Smart Control</span>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="btnConnect">Koble til rullen</button>
+        <button class="btn ghost" id="btnDemo">Demomodus</button>
+      </div>
+      <div class="metrics" aria-live="polite">
+        <div class="metric"><div class="v num" id="mPow">–</div><div class="u">watt</div></div>
+        <div class="metric"><div class="v num" id="mCad">–</div><div class="u">rpm</div></div>
+        <div class="metric"><div class="v num" id="mSpd">–</div><div class="u">km/t</div></div>
+        <div class="metric"><div class="v num" id="mTgt">–</div><div class="u">mål W</div></div>
+      </div>
+      <p class="small muted" id="modeLine">Modus: –</p>
+    </div>
+
+    <div class="card">
+      <h2>Motstand</h2>
+      <div class="seg" role="group" aria-label="Modus">
+        <button data-mode="erg" aria-pressed="true">ERG</button>
+        <button data-mode="sim" aria-pressed="false">Bakke</button>
+        <button data-mode="fluid" aria-pressed="false">Fluid</button>
+        <button data-mode="brake" aria-pressed="false">Brems</button>
+      </div>
+      <div class="dial">
+        <button id="dMinus" aria-label="Mindre">−</button>
+        <div class="val"><div class="num" id="dVal">150</div><div class="small muted" id="dUnit">watt</div></div>
+        <button id="dPlus" aria-label="Mer">+</button>
+      </div>
+      <input type="range" id="dRange" min="50" max="600" step="5" value="150" aria-label="Nivå">
+      <p class="note" id="modeHelp"></p>
+      <button class="btn primary" id="btnApply">Send til rullen</button>
+    </div>
+
+    <div class="card">
+      <h2>Kalibrering</h2>
+      <p class="small">Kalibrer etter rundt 20 minutters oppvarming (Zwifts oppsett for Kinetic sier 20 min før kalibrering), så wattmålingen stemmer. Tråkk opp over terskelfarten, slutt å tråkke når appen sier det, og la rullen trille ut.</p>
+      <div class="row spread">
+        <span class="small" id="calText">Status: ukjent</span>
+        <span class="small muted">Terskel <span class="num" id="calThr">33,8</span> km/t</span>
+      </div>
+      <div class="row">
+        <button class="btn" id="btnCal">Start kalibrering</button>
+        <button class="btn ghost" id="btnCalStop" hidden>Avbryt</button>
+      </div>
+    </div>
+
+    <details class="card">
+      <summary>Logg</summary>
+      <pre id="log" class="small muted" style="white-space:pre-wrap;margin:0;max-height:200px;overflow:auto"></pre>
+    </details>
+  </section>
+
+  <!-- ØKTER -->
+  <section class="panel" id="p-okter" hidden>
+    <div class="card">
+      <div class="row spread"><h2>Din FTP</h2><span class="small muted">Alle økter skaleres etter denne</span></div>
+      <div class="row">
+        <div class="field" style="flex:1"><label class="label" for="ftp">FTP (watt)</label><input type="number" id="ftp" min="60" max="600" inputmode="numeric" value="200"></div>
+        <button class="btn" id="btnFtpSave" style="align-self:end">Lagre</button>
+      </div>
+      <div class="zones" id="zoneLegend"></div>
+      <p class="small muted">Sonene følger Coggans effektnivåer i prosent av FTP. Har du ikke FTP, kjør «FTP-test 20 min» først.</p>
+    </div>
+    <div class="wlist" id="wlist"></div>
+
+    <details class="card" id="builder">
+      <summary>Lag egen økt</summary>
+      <div class="field"><label class="label" for="bName">Navn</label><input type="text" id="bName" value="Min økt"></div>
+      <div class="steps" id="bSteps"></div>
+      <div class="row">
+        <button class="btn" id="bAdd">Legg til steg</button>
+        <button class="btn primary" id="bSave">Lagre økt</button>
+      </div>
+      <svg class="prof" id="bProf" viewBox="0 0 300 56" preserveAspectRatio="none"></svg>
+    </details>
+  </section>
+
+  <!-- PLAN -->
+  <section class="panel" id="p-plan" hidden>
+    <div class="card">
+      <h2>4 uker, 3 økter i uka</h2>
+      <p class="small">Tre byggeuker, så en lett uke med FTP-test. Kryss av når en økt er gjort, eller start den herfra.</p>
+      <p class="note">Strukturen er et forslag fra meg, ikke en forskningsbasert plan. Intensitetene bruker Coggans soner.</p>
+    </div>
+    <div id="planWeeks" class="wlist"></div>
+    <div class="card">
+      <div class="row spread"><h2>Historikk</h2><button class="btn ghost danger" id="btnClearHist">Tøm</button></div>
+      <div class="tablewrap"><table class="hist"><thead><tr><th>Dato</th><th>Økt</th><th class="r">Min</th><th class="r">Snitt W</th><th class="r">kJ</th></tr></thead><tbody id="histBody"></tbody></table></div>
+      <p class="small muted" id="histEmpty">Ingen økter ennå. Fullførte økter havner her.</p>
+    </div>
+  </section>
+</div>
+
+<!-- RIDE VIEW -->
+<div id="ride" hidden>
+  <div class="wrap">
+    <div class="row spread">
+      <h2 id="rName">Økt</h2>
+      <span class="num" style="font-size:22px" id="rClock">00:00 / 00:00</span>
+    </div>
+    <div class="stepbar">
+      <div class="row spread"><span class="stepname" id="rStep">–</span><span class="num" style="font-size:22px" id="rStepLeft">0:00</span></div>
+      <div class="prog"><i id="rProg"></i></div>
+      <span class="small muted" id="rNext">Neste: –</span>
+    </div>
+    <div class="big">
+      <div class="metric target" id="rTgtBox"><div class="v num" id="rTgt">–</div><div class="u" id="rTgtU">mål watt</div></div>
+      <div class="metric"><div class="v num" id="rPow">–</div><div class="u">watt nå</div></div>
+      <div class="metric"><div class="v num" id="rCad">–</div><div class="u">rpm</div></div>
+      <div class="metric"><div class="v num" id="rAvg">–</div><div class="u">snitt watt</div></div>
+    </div>
+    <div class="adj">
+      <button class="btn" id="rDown">−</button>
+      <span class="small muted" style="text-align:center" id="rAdjText">Intensitet 100 %</span>
+      <button class="btn" id="rUp">+</button>
+    </div>
+    <svg class="rideprof" id="rProf" viewBox="0 0 300 110" preserveAspectRatio="none"></svg>
+    <div class="ctrl">
+      <button class="btn" id="rPause">Pause</button>
+      <button class="btn" id="rSkip">Hopp over</button>
+      <button class="btn danger" id="rStop">Avslutt</button>
+    </div>
+    <div class="row" id="rConfirm" hidden>
+      <span class="small">Avslutte og lagre økta?</span>
+      <button class="btn primary" id="rStopYes">Ja, avslutt</button>
+      <button class="btn ghost" id="rStopNo">Fortsett</button>
+    </div>
+    <p class="note" id="rHint">ERG holder wattene uansett tråkkfrekvens. Bruk lite kjededrev og hold jevn kadens.</p>
+    <div class="card" id="rSummary" hidden></div>
+  </div>
+</div>
+
+<script>
+const SC = {
+  SERVICE: 'e9410200-b434-446b-b5cc-36592fc4c724',
+  POWER:   'e9410201-b434-446b-b5cc-36592fc4c724',
+  CONFIG:  'e9410202-b434-446b-b5cc-36592fc4c724',
+  CONTROL: 'e9410203-b434-446b-b5cc-36592fc4c724',
+  MODE: { ERG: 0, FLUID: 1, BRAKE: 2, SIM: 3 },
+  _t: [0x00,0x91,0xe3,0x72,0x07,0x96,0xe4,0x75,0x0e,0x9f,0xed,0x7c,0x09,0x98,0xea,0x7b,0x1c,0x8d,0xff,0x6e,0x1b,0x8a,0xf8,0x69,0x12,0x83,0xf1,0x60,0x15,0x84,0xf6,0x67,0x38,0xa9,0xdb,0x4a,0x3f,0xae,0xdc,0x4d,0x36,0xa7,0xd5,0x44,0x31,0xa0,0xd2,0x43,0x24,0xb5,0xc7,0x56,0x23,0xb2,0xc0,0x51,0x2a,0xbb,0xc9,0x58,0x2d,0xbc,0xce,0x5f,0x70,0xe1,0x93,0x02,0x77,0xe6,0x94,0x05,0x7e,0xef,0x9d,0x0c,0x79,0xe8,0x9a,0x0b,0x6c,0xfd,0x8f,0x1e,0x6b,0xfa,0x88,0x19,0x62,0xf3,0x81,0x10,0x65,0xf4,0x86,0x17,0x48,0xd9,0xab,0x3a,0x4f,0xde,0xac,0x3d,0x46,0xd7,0xa5,0x34,0x41,0xd0,0xa2,0x33,0x54,0xc5,0xb7,0x26,0x53,0xc2,0xb0,0x21,0x5a,0xcb,0xb9,0x28,0x5d,0xcc,0xbe,0x2f,0xe0,0x71,0x03,0x92,0xe7,0x76,0x04,0x95,0xee,0x7f,0x0d,0x9c,0xe9,0x78,0x0a,0x9b,0xfc,0x6d,0x1f,0x8e,0xfb,0x6a,0x18,0x89,0xf2,0x63,0x11,0x80,0xf5,0x64,0x16,0x87,0xd8,0x49,0x3b,0xaa,0xdf,0x4e,0x3c,0xad,0xd6,0x47,0x35,0xa4,0xd1,0x40,0x32,0xa3,0xc4,0x55,0x27,0xb6,0xc3,0x52,0x20,0xb1,0xca,0x5b,0x29,0xb8,0xcd,0x5c,0x2e,0xbf,0x90,0x01,0x73,0xe2,0x97,0x06,0x74,0xe5,0x9e,0x0f,0x7d,0xec,0x99,0x08,0x7a,0xeb,0x8c,0x1d,0x6f,0xfe,0x8b,0x1a,0x68,0xf9,0x82,0x13,0x61,0xf0,0x85,0x14,0x66,0xf7,0xa8,0x39,0x4b,0xda,0xaf,0x3e,0x4c,0xdd,0xa6,0x37,0x45,0xd4,0xa1,0x30,0x42,0xd3,0xb4,0x25,0x57,0xc6,0xb3,0x22,0x50,0xc1,0xba,0x2b,0x59,0xc8,0xbd,0x2c,0x5e,0xcf],
+  nonce: () => Math.floor(Math.random() * 256),
+  h8(h, b) { return this._t[(h ^ b) & 0xff]; },
+  encode(plain) { // last byte = nonce, stays in clear
+    const out = Uint8Array.from(plain), n = out.length;
+    let h = this.h8(0x42, out[n - 1]);
+    for (let i = 0; i < n - 1; i++) { const t = out[i]; out[i] ^= h; h = this.h8(h, t); }
+    return out;
+  },
+  decode(bytes) {
+    const d = Uint8Array.from(bytes), n = d.length;
+    let h = this.h8(0x42, d[n - 1]);
+    for (let i = 0; i < n - 1; i++) { d[i] ^= h; h = this.h8(h, d[i]); }
+    return d;
+  },
+  u16: v => [(v >> 8) & 0xff, v & 0xff],
+  erg(watts) { const w = Math.max(0, Math.min(0xffff, Math.round(watts))); return this.encode([0, 0, ...this.u16(w), this.nonce()]); },
+  fluid(level) { const l = Math.max(0, Math.min(9, Math.round(level))); return this.encode([0, 1, l, this.nonce()]); },
+  brake(pct) { const v = Math.round(65535 * Math.max(0, Math.min(1, pct))); return this.encode([0, 2, ...this.u16(v), this.nonce()]); },
+  sim(weightKG, rr, cw, grade, wind) {
+    const r = Math.round, c = (a, lo, hi) => Math.max(lo, Math.min(hi, a));
+    const s16 = v => this.u16(v & 0xffff);
+    return this.encode([0, 3,
+      ...this.u16(r(Math.min(655.36, weightKG) * 100) & 0xffff),
+      ...this.u16(r(Math.min(6.5536, rr) * 10000) & 0xffff),
+      ...this.u16(r(Math.min(6.5536, cw) * 10000) & 0xffff),
+      ...s16(r(c(grade, -45, 45) * 100)),
+      ...s16(r(wind * 100)),
+      this.nonce()]);
+  },
+  calibrate(start, brake) { return this.encode(start ? [3, 1, brake ? 1 : 0, this.nonce()] : [3, 0, 0, this.nonce()]); },
+  parsePower(bytes) {
+    if (bytes.length < 14) return null;
+    const d = this.decode(bytes);
+    const p = { mode: d[0], target: (d[1] << 8) | d[2], power: (d[3] << 8) | d[4], cadence: d[12] };
+    if (d.length >= 18) p.kph = (((d[13] << 24) >>> 0) + (d[14] << 16) + (d[15] << 8) + d[16]) / 1000;
+    else { const t = (d[5] << 8) | d[6]; p.kph = (t === 0 || t === 65535) ? 0 : 6107.2561186 / t; }
+    return p;
+  },
+  parseConfig(bytes) {
+    if (bytes.length < 5) return null;
+    const d = this.decode(bytes);
+    const c = { updateRate: d[0], fwUpdate: d[4] };
+    if (d.length >= 13) { c.status = (d[5] << 8) | d[6]; c.calState = d[7]; c.spindown = ((((d[8] << 24) >>> 0) + (d[9] << 16) + (d[10] << 8) + d[11]) / 10000); }
+    c.calThresholdKPH = d.length >= 15 ? ((d[12] << 8) | d[13]) / 1000 : 33.8;
+    return c;
+  }
+};
+
+
+// ---------- storage (safe) ----------
+const store={get(k,d){try{const v=localStorage.getItem('rulle.'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem('rulle.'+k,JSON.stringify(v))}catch(e){}}};
+const $=id=>document.getElementById(id);
+const fmt=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0')};
+function toast(t){const el=document.createElement('div');el.className='toast';el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
+function log(t){const l=$('log');l.textContent=(new Date().toLocaleTimeString('nb-NO')+'  '+t+'\n'+l.textContent).slice(0,4000)}
+
+// ---------- zones (Coggan, % of FTP) ----------
+const ZONES=[{n:'Z1 Restitusjon',max:55,c:'--z1'},{n:'Z2 Utholdenhet',max:75,c:'--z2'},{n:'Z3 Tempo',max:90,c:'--z3'},{n:'Z4 Terskel',max:105,c:'--z4'},{n:'Z5 VO2maks',max:120,c:'--z5'},{n:'Z6 Anaerob',max:999,c:'--z6'}];
+const zoneOf=p=>ZONES.find(z=>p<=z.max)||ZONES[5];
+const zc=p=>`var(${zoneOf(p).c})`;
+
+// ---------- workouts ----------
+const M=60;
+const S=(min,p,label)=>({d:Math.round(min*M),p,label});
+const F=(min,label)=>({d:Math.round(min*M),free:true,label});
+function warm(){return [S(4,50,'Oppvarming'),S(3,60,'Oppvarming'),S(3,70,'Oppvarming')]}
+function cool(min=5){return [S(min,50,'Nedtråkk')]}
+function rep(n,on,off){const a=[];for(let i=1;i<=n;i++){a.push({...on,label:`${on.label} ${i}/${n}`});if(i<n)a.push({...off})}return a}
+function endur(min){return {id:'end'+min,name:`Utholdenhet ${min} min`,desc:'Jevn sone 2. Grunnmuren i all trening.',steps:[...warm(),S(min-15,68,'Sone 2'),...cool()]}}
+const BUILTIN=[
+  endur(45),endur(60),endur(75),
+  {id:'rest30',name:'Rolig 30 min',desc:'Lett restitusjon dagen etter test.',steps:[S(30,50,'Rolig')]},
+  {id:'tempo3x12',name:'Tempo 3×12',desc:'Tre drag i sone 3 med 4 min pause.',steps:[...warm(),...rep(3,S(12,82,'Tempo'),S(4,55,'Pause')),...cool()]},
+  {id:'ss3x10',name:'Sweet spot 3×10',desc:'Høy sone 3 / lav sone 4, 5 min pause.',steps:[...warm(),...rep(3,S(10,88,'Sweet spot'),S(5,55,'Pause')),...cool()]},
+  {id:'ss3x12',name:'Sweet spot 3×12',desc:'Litt lengre drag enn uke 1.',steps:[...warm(),...rep(3,S(12,89,'Sweet spot'),S(5,55,'Pause')),...cool()]},
+  {id:'thr2x20',name:'Terskel 2×20',desc:'To lange drag rett rundt FTP.',steps:[...warm(),S(5,75,'Oppvarming'),...rep(2,S(20,95,'Terskel'),S(5,55,'Pause')),...cool(8)]},
+  {id:'vo5x3',name:'VO2maks 5×3',desc:'Korte, harde drag i sone 5.',steps:[...warm(),S(2,80,'Oppvarming'),...rep(5,S(3,112,'VO2'),S(3,50,'Pause')),...cool(8)]},
+  {id:'ftp20',name:'FTP-test 20 min',test:true,desc:'Allen/Coggan-protokoll. Testdragene kjøres i fri motstand; FTP = 95 % av snittet på 20-minuttersdraget.',
+   steps:[S(20,60,'Oppvarming'),S(1,65,'Spinn 1/3 (mot 120 rpm)'),S(1,50,'Rolig'),S(1,65,'Spinn 2/3 (mot 120 rpm)'),S(1,50,'Rolig'),S(1,65,'Spinn 3/3 (mot 120 rpm)'),S(5,50,'Rolig'),
+     F(5,'5 min alt du har'),S(5,50,'Rolig'),{...F(20,'20 min test – jevnt og hardt'),test:true},S(10,50,'Nedtråkk')]}
+];
+let custom=store.get('custom',[]);
+const allW=()=>[...BUILTIN,...custom];
+const wById=id=>allW().find(w=>w.id===id);
+const wDur=w=>w.steps.reduce((a,s)=>a+s.d,0);
+
+function profileSVG(svg,steps,H){
+  const T=steps.reduce((a,s)=>a+s.d,0)||1,W=300;let x=0,out='';
+  for(const s of steps){const w=s.d/T*W,p=s.free?100:s.p,h=Math.max(4,Math.min(1,p/130)*(H-4));
+    out+=s.free?`<rect x="${x.toFixed(2)}" y="${(H-h).toFixed(2)}" width="${Math.max(.5,w-.4).toFixed(2)}" height="${h.toFixed(2)}" fill="var(--muted)" fill-opacity=".45"/>`
+      :`<rect x="${x.toFixed(2)}" y="${(H-h).toFixed(2)}" width="${Math.max(.5,w-.4).toFixed(2)}" height="${h.toFixed(2)}" fill="${zc(p)}"/>`;x+=w}
+  const fy=H-(100/130)*(H-4);
+  out+=`<line x1="0" x2="300" y1="${fy}" y2="${fy}" stroke="var(--fg)" stroke-opacity=".35" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+  svg.innerHTML=out;return T;
+}
+
+// ---------- BLE ----------
+let dev=null,ctl=null,demo=false,live={power:0,cadence:0,kph:0,target:0,mode:null},cfg=null;
+let pendingCmd=null,writing=false;
+const MODE_NAMES=['ERG','Fluid','Brems','Bakke'];
+function setConn(state,text){const p=$('connPill');p.className='pill '+(state||'');$('connText').textContent=text}
+async function connect(){
+  log('Koble til trykket. Nettleser: '+navigator.userAgent.slice(0,90));
+  if(!navigator.bluetooth){$('noBt').hidden=false;log('FEIL: Web Bluetooth finnes ikke her. Åpne siden i Bluefy via https.');toast('Web Bluetooth mangler – bruk Bluefy');return}
+  log('Web Bluetooth finnes. Åpner enhetsvelger …');
+  try{
+    setConn('', 'Søker …');
+    dev=await navigator.bluetooth.requestDevice({filters:[{services:[SC.SERVICE]},{namePrefix:'Smart Control'}],optionalServices:[SC.SERVICE]});
+    dev.addEventListener('gattserverdisconnected',onDisconnect);
+    await gattSetup();
+  }catch(e){setConn('','Ikke tilkoblet');log('Tilkobling feilet: '+e.message);if(e.name!=='NotFoundError')toast('Fikk ikke koblet til: '+e.message)}
+}
+async function gattSetup(){
+  setConn('','Kobler til …');
+  const srv=await dev.gatt.connect();
+  const svc=await srv.getPrimaryService(SC.SERVICE);
+  const pw=await svc.getCharacteristic(SC.POWER);
+  pw.addEventListener('characteristicvaluechanged',e=>{const v=e.target.value;onPower(new Uint8Array(v.buffer,v.byteOffset,v.byteLength))});
+  await pw.startNotifications();
+  try{const c=await svc.getCharacteristic(SC.CONFIG);
+    c.addEventListener('characteristicvaluechanged',e=>{const v=e.target.value;onConfig(new Uint8Array(v.buffer,v.byteOffset,v.byteLength))});
+    await c.startNotifications();const v=await c.readValue();onConfig(new Uint8Array(v.buffer,v.byteOffset,v.byteLength))}catch(e){log('Config: '+e.message)}
+  ctl=await svc.getCharacteristic(SC.CONTROL);
+  try{await ctl.startNotifications()}catch(e){}
+  demo=false;$('devName').textContent=dev.name||'Smart Control';
+  setConn('on','Tilkoblet');log('Tilkoblet '+(dev.name||''));
+  if(ride&&!ride.ended)applyStep(true);
+}
+let reconnTries=0;
+async function onDisconnect(){
+  ctl=null;setConn('','Frakoblet');log('Frakoblet');
+  if(reconnTries>=3){reconnTries=0;toast('Mistet rullen. Trykk «Koble til rullen».');return}
+  reconnTries++;setTimeout(async()=>{try{await gattSetup();reconnTries=0}catch(e){log('Gjentilkobling feilet: '+e.message);onDisconnect()}},1500);
+}
+function send(bytes,desc){
+  if(desc)log('→ '+desc);
+  if(demo){demoApply(bytes);return}
+  if(!ctl){return}
+  pendingCmd=bytes;pump();
+}
+async function pump(){
+  if(writing||!pendingCmd||!ctl)return;writing=true;
+  const b=pendingCmd;pendingCmd=null;
+  try{await (ctl.writeValueWithResponse?ctl.writeValueWithResponse(b):ctl.writeValue(b))}catch(e){log('Skrivefeil: '+e.message)}
+  writing=false;if(pendingCmd)pump();
+}
+function onPower(bytes){const p=SC.parsePower(bytes);if(!p)return;live=p;renderLive()}
+const CAL={0:'ikke utført',1:'starter …',2:'tråkk opp over terskelfarten',3:'SLUTT Å TRÅKKE nå',4:'triller ut …',5:'fart oppdaget – tråkk opp igjen',10:'fullført'};
+function onConfig(bytes){cfg=SC.parseConfig(bytes);if(!cfg)return;
+  if(cfg.calThresholdKPH)$('calThr').textContent=cfg.calThresholdKPH.toFixed(1).replace('.',',');
+  if(cfg.calState!=null){$('calText').textContent='Status: '+(CAL[cfg.calState]||('kode '+cfg.calState))+(cfg.calState===10&&cfg.spindown?` (${cfg.spindown.toFixed(2).replace('.',',')} s)`:'');
+    const active=cfg.calState>=1&&cfg.calState<10;$('btnCalStop').hidden=!active;$('btnCal').disabled=active;if(cfg.calState===10)toast('Kalibrering fullført')}
+  if(cfg.status)log('Systemstatus: '+cfg.status);
+}
+function renderLive(){
+  $('mPow').textContent=live.power;$('mCad').textContent=live.cadence;
+  $('mSpd').textContent=(live.kph||0).toFixed(1).replace('.',',');
+  $('mTgt').textContent=live.mode===0?live.target:'–';
+  $('modeLine').textContent='Modus på rullen: '+(MODE_NAMES[live.mode]||'–');
+}
+
+// ---------- demo trainer ----------
+let demoT=null,demoState={mode:1,erg:150,level:3,brake:.3,grade:0};
+function startDemo(){
+  demo=true;ctl=null;setConn('demo','Demo');$('devName').textContent='Simulert rulle';log('Demomodus på');
+  clearInterval(demoT);let cad=88;
+  demoT=setInterval(()=>{cad+= (90-cad)*.1+(Math.random()-.5)*4;const kph=cad*.36;let w;
+    if(demoState.mode===0)w=demoState.erg+(Math.random()-.5)*14;
+    else if(demoState.mode===2)w=40+demoState.brake*380*(kph/30);
+    else{const g=demoState.mode===1?demoState.level:demoState.grade;const v=kph/3.6;w=Math.max(0,(85*9.81*(0.004+g/100)*v+0.5*1.2*0.5*v*v*v));}
+    onPower(SC.encode([demoState.mode,...SC.u16(Math.round(demoState.erg)),...SC.u16(Math.round(Math.max(0,w))),0,0,0,0,0,0,0,Math.round(cad),...[0,0,0,0].map((_,i)=>((Math.round(kph*1000)>>>(24-8*i))&255)),0]));
+  },1000);
+}
+function demoApply(bytes){const d=SC.decode(bytes);if(d[0]===0){demoState.mode=d[1];
+  if(d[1]===0)demoState.erg=(d[2]<<8)|d[3];if(d[1]===1)demoState.level=d[2];if(d[1]===2)demoState.brake=((d[2]<<8)|d[3])/65535;
+  if(d[1]===3){let g=(d[8]<<8)|d[9];if(g>32767)g-=65536;demoState.grade=g/100}}
+  if(d[0]===3&&d[1]===1){let s=1;const seq=[1,2,3,4,10];const t=setInterval(()=>{onConfig(SC.encode([1,0,39,16,0,0,0,seq[s],0,0,0x7a,0x12,0x84,0x08,0]));if(++s>=seq.length)clearInterval(t)},1500)}
+}
+
+// ---------- manual control ----------
+const MODES={erg:{min:50,max:800,step:5,def:150,unit:'watt',help:'ERG: rullen holder valgt watt uansett kadens.',cmd:v=>SC.erg(v)},
+  sim:{min:-5,max:10,step:.5,def:2,unit:'% stigning',help:'Bakke: simulerer stigning for 85 kg rytter + sykkel. Kinetic oppgir maks 10 % for sine kontrollenheter.',cmd:v=>SC.sim(85,0.004,0.6,v,0)},
+  fluid:{min:0,max:9,step:1,def:3,unit:'nivå (0–9)',help:'Fluid: føles som en vanlig væskerulle. Nivå = simulert stigning i %.',cmd:v=>SC.fluid(v)},
+  brake:{min:0,max:100,step:5,def:30,unit:'% brems',help:'Brems: fast magnetposisjon. Motstanden øker med farten.',cmd:v=>SC.brake(v/100)}};
+let mmode='erg',mval=store.get('mval',{erg:150,sim:2,fluid:3,brake:30});
+function setMode(m){mmode=m;document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
+  const c=MODES[m],r=$('dRange');r.min=c.min;r.max=c.max;r.step=c.step;r.value=mval[m];$('dUnit').textContent=c.unit;$('modeHelp').textContent=c.help;showVal()}
+function showVal(){$('dVal').textContent=String(mval[mmode]).replace('.',',')}
+function nudge(dir){const c=MODES[mmode];mval[mmode]=Math.round(Math.max(c.min,Math.min(c.max,mval[mmode]+dir*c.step))*10)/10;$('dRange').value=mval[mmode];showVal();store.set('mval',mval)}
+function applyManual(){if(!ctl&&!demo){toast('Koble til rullen eller start demomodus først');return}
+  send(MODES[mmode].cmd(mval[mmode]),`${mmode.toUpperCase()} ${mval[mmode]} ${MODES[mmode].unit}`);toast('Sendt: '+String(mval[mmode]).replace('.',',')+' '+MODES[mmode].unit)}
+
+// ---------- tabs ----------
+function showTab(t){['rulle','okter','plan'].forEach(x=>{$('p-'+x).hidden=x!==t;$('tab-'+x).setAttribute('aria-selected',String(x===t))});store.set('tab',t);if(t==='plan')renderPlan()}
+
+// ---------- workouts list ----------
+function ftp(){return Math.max(60,Number(store.get('ftp',200))||200)}
+function renderZones(){$('zoneLegend').innerHTML=ZONES.map((z,i)=>{const lo=i?ZONES[i-1].max+1:0;const hi=z.max>200?'':z.max;
+  return `<span><i style="background:var(${z.c})"></i>${z.n.split(' ')[0]} ${i===5?'≥'+Math.round(lo*ftp()/100):Math.round(lo*ftp()/100)+'–'+Math.round(hi*ftp()/100)} W</span>`}).join('')}
+function renderWorkouts(){
+  const L=$('wlist');L.innerHTML='';
+  for(const w of allW()){
+    const el=document.createElement('div');el.className='wk';
+    const isCustom=custom.some(c=>c.id===w.id);
+    const avgP=Math.round(w.steps.filter(s=>!s.free).reduce((a,s)=>a+s.p*s.d,0)/Math.max(1,w.steps.filter(s=>!s.free).reduce((a,s)=>a+s.d,0)));
+    el.innerHTML=`<div class="row spread"><h3></h3><span class="num" style="font-size:18px">${Math.round(wDur(w)/60)} min</span></div>
+      <svg class="prof" viewBox="0 0 300 56" preserveAspectRatio="none"></svg>
+      <p class="small"></p>
+      <div class="meta"><span>Snitt ERG-del ${avgP} % ≈ ${Math.round(avgP*ftp()/100)} W</span>${w.test?'<span>Inneholder fri motstand</span>':''}</div>
+      <div class="row"><button class="btn primary">Start</button>${isCustom?'<button class="btn ghost danger" data-del>Slett</button>':''}</div>`;
+    el.querySelector('h3').textContent=w.name;el.querySelector('p').textContent=w.desc||'';
+    profileSVG(el.querySelector('svg'),w.steps,56);
+    el.querySelector('.btn.primary').onclick=()=>startRide(w.id);
+    const d=el.querySelector('[data-del]');if(d)d.onclick=()=>{custom=custom.filter(c=>c.id!==w.id);store.set('custom',custom);renderWorkouts()};
+    L.appendChild(el)}
+}
+
+// ---------- builder ----------
+let bSteps=[{min:10,p:60},{min:20,p:85},{min:5,p:50}];
+function renderBuilder(){
+  const B=$('bSteps');B.innerHTML='';
+  bSteps.forEach((s,i)=>{const r=document.createElement('div');r.className='step';
+    r.innerHTML=`<div class="field"><label class="label" for="bm${i}">Minutter</label><input type="number" id="bm${i}" min="0.5" step="0.5" inputmode="decimal" value="${s.min}"></div>
+      <div class="field"><label class="label" for="bp${i}">% av FTP</label><input type="number" id="bp${i}" min="30" max="200" inputmode="numeric" value="${s.p}"></div>
+      <button class="btn ghost" aria-label="Fjern steg">×</button>`;
+    r.querySelector('#bm'+i).oninput=e=>{s.min=Number(e.target.value)||0;drawB()};
+    r.querySelector('#bp'+i).oninput=e=>{s.p=Number(e.target.value)||0;drawB()};
+    r.querySelector('button').onclick=()=>{bSteps.splice(i,1);renderBuilder()};B.appendChild(r)});
+  drawB()}
+function drawB(){profileSVG($('bProf'),bSteps.filter(s=>s.min>0).map(s=>S(s.min,s.p,'')),56)}
+function saveBuilder(){const steps=bSteps.filter(s=>s.min>0&&s.p>0).map((s,i)=>S(s.min,s.p,`Steg ${i+1} – ${s.p} %`));
+  if(!steps.length){toast('Legg til minst ett steg');return}
+  custom.push({id:'c'+Date.now(),name:$('bName').value.trim()||'Min økt',desc:'Egen økt',steps});store.set('custom',custom);renderWorkouts();toast('Økt lagret')}
+
+// ---------- plan ----------
+const PLAN=[
+  {t:'Uke 1 – grunnlag',s:['end45','ss3x10','end60']},
+  {t:'Uke 2 – mer tid i sone 3',s:['tempo3x12','ss3x12','end60']},
+  {t:'Uke 3 – terskel og VO2',s:['thr2x20','vo5x3','end75']},
+  {t:'Uke 4 – lett uke og test',s:['end45','ftp20','rest30']}];
+function renderPlan(){
+  const done=store.get('done',{});const P=$('planWeeks');P.innerHTML='';
+  PLAN.forEach((wk,wi)=>{const c=document.createElement('div');c.className='week';
+    c.innerHTML=`<h3></h3>`;c.querySelector('h3').textContent=wk.t;
+    wk.s.forEach((id,si)=>{const w=wById(id),key=wi+'-'+si,row=document.createElement('div');row.className='session'+(done[key]?' done':'');
+      row.innerHTML=`<input type="checkbox" id="pl${key}" ${done[key]?'checked':''} aria-label="Fullført"><label for="pl${key}" class="t"></label><button class="btn">Start</button>`;
+      row.querySelector('label').textContent=`${w.name} · ${Math.round(wDur(w)/60)} min`;
+      row.querySelector('input').onchange=e=>{const d=store.get('done',{});d[key]=e.target.checked;store.set('done',d);row.classList.toggle('done',e.target.checked)};
+      row.querySelector('button').onclick=()=>startRide(id,key);c.appendChild(row)});
+    P.appendChild(c)});
+  const h=store.get('hist',[]);$('histEmpty').hidden=h.length>0;
+  $('histBody').innerHTML=h.map(r=>`<tr><td>${new Date(r.at).toLocaleDateString('nb-NO',{day:'numeric',month:'short'})}</td><td>${r.name.replace(/[<&]/g,'')}</td><td class="r">${Math.round(r.sec/60)}</td><td class="r">${r.avg}</td><td class="r">${r.kj}</td></tr>`).join('');
+}
+
+// ---------- ride engine ----------
+let ride=null,tick=null,wakeLock=null;
+async function keepAwake(){try{if('wakeLock' in navigator)wakeLock=await navigator.wakeLock.request('screen')}catch(e){}}
+function startRide(id,planKey){
+  if(!ctl&&!demo){showTab('rulle');toast('Koble til rullen eller start demomodus først');return}
+  const w=wById(id);const starts=[];let t=0;for(const s of w.steps){starts.push(t);t+=s.d}
+  ride={w,planKey,starts,total:t,elapsed:0,last:Date.now(),paused:false,idx:-1,scale:100,freeLevel:4,samples:[],sentAt:0,ended:false};
+  $('ride').hidden=false;$('rSummary').hidden=true;$('rConfirm').hidden=true;$('rName').textContent=w.name;
+  document.querySelectorAll('#ride .ctrl button,#ride .adj button').forEach(b=>b.disabled=false);
+  $('rPause').textContent='Pause';keepAwake();
+  clearInterval(tick);tick=setInterval(rideTick,250);rideTick();
+}
+function curStep(){return ride.w.steps[ride.idx]}
+function targetW(s){return Math.round(s.p*ftp()/100*ride.scale/100)}
+function applyStep(force){
+  const s=curStep();if(!s)return;
+  if(s.free)send(SC.fluid(ride.freeLevel),`Fri motstand, fluid ${ride.freeLevel}`);
+  else send(SC.erg(targetW(s)),`ERG ${targetW(s)} W`);
+  ride.sentAt=Date.now();
+}
+function rideTick(){
+  if(!ride||ride.ended)return;const now=Date.now();
+  if(!ride.paused)ride.elapsed+=(now-ride.last)/1000;ride.last=now;
+  if(ride.elapsed>=ride.total){finishRide();return}
+  let i=ride.starts.length-1;while(i>0&&ride.starts[i]>ride.elapsed)i--;
+  if(i!==ride.idx){ride.idx=i;applyStep();if(i>0&&navigator.vibrate)try{navigator.vibrate(200)}catch(e){}}
+  if(!ride.paused)rideSample();
+  const s=curStep();
+  // resend ERG if the unit reports a different target (lost write) – every 5 s at most
+  if(!s.free&&!demo&&now-ride.sentAt>5000&&live.mode===0&&live.target!==targetW(s))applyStep();
+  renderRide();
+}
+function rideSample(){// one sample per ridden second, so kJ = sum(W)/1000
+  const sec=Math.floor(ride.elapsed);while((ride.lastSec??-1)<sec){ride.lastSec=(ride.lastSec??-1)+1;ride.samples.push({t:ride.lastSec,w:live.power,c:live.cadence,i:ride.idx})}}
+function renderRide(){
+  const r=ride,s=curStep(),next=r.w.steps[r.idx+1];
+  const stepEnd=r.starts[r.idx]+s.d,left=stepEnd-r.elapsed;
+  $('rClock').textContent=fmt(r.elapsed)+' / '+fmt(r.total);
+  $('rStep').textContent=s.label||'';$('rStepLeft').textContent=fmt(left);
+  $('rProg').style.width=((1-left/s.d)*100).toFixed(1)+'%';
+  const col=s.free?'var(--muted)':zc(s.p);$('rProg').style.setProperty('--zc',col);$('rTgtBox').style.setProperty('--zc',col);
+  $('rNext').textContent=next?`Neste: ${next.label} · ${next.free?'fri motstand':targetW(next)+' W'} · ${fmt(next.d)}`:'Siste steg';
+  if(s.free){$('rTgt').textContent='F'+r.freeLevel;$('rTgtU').textContent='fri motstand, nivå';$('rAdjText').textContent='Motstandsnivå '+r.freeLevel+' av 9'}
+  else{$('rTgt').textContent=targetW(s);$('rTgtU').textContent=`mål watt · ${s.p} %`;$('rAdjText').textContent='Intensitet '+r.scale+' %'}
+  $('rHint').textContent=s.free?'Fri motstand: velg gir og nivå selv. Kjør så jevnt du klarer.':'ERG holder wattene uansett kadens. Bruk lite kjededrev og hold jevn kadens.';
+  $('rPow').textContent=live.power;$('rCad').textContent=live.cadence;
+  const ws=r.samples.filter(x=>x.w>0);$('rAvg').textContent=ws.length?Math.round(ws.reduce((a,x)=>a+x.w,0)/ws.length):'–';
+  // profile + actual
+  const svg=$('rProf');profileSVG(svg,r.w.steps,110);
+  const H=110,sc=v=>H-Math.min(1,v/(ftp()*1.3))*(H-4);
+  if(r.samples.length>1){let pts='';const step=Math.max(1,Math.floor(r.samples.length/400));
+    for(let k=0;k<r.samples.length;k+=step){const x=r.samples[k];pts+=`${(x.t/r.total*300).toFixed(1)},${sc(x.w).toFixed(1)} `}
+    svg.insertAdjacentHTML('beforeend',`<polyline points="${pts}" fill="none" stroke="var(--fg)" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>`)}
+  const px=(r.elapsed/r.total*300).toFixed(1);
+  svg.insertAdjacentHTML('beforeend',`<line x1="${px}" x2="${px}" y1="0" y2="${H}" stroke="var(--fg)" stroke-width="2" vector-effect="non-scaling-stroke"/>`);
+}
+function adjust(dir){if(!ride||ride.ended)return;const s=curStep();
+  if(s.free){ride.freeLevel=Math.max(0,Math.min(9,ride.freeLevel+dir))}else{ride.scale=Math.max(50,Math.min(130,ride.scale+dir*5))}
+  applyStep();renderRide()}
+function togglePause(){if(!ride||ride.ended)return;ride.paused=!ride.paused;$('rPause').textContent=ride.paused?'Fortsett':'Pause';
+  if(ride.paused)send(SC.fluid(1),'Pause: lett motstand');else applyStep()}
+function skip(){if(!ride||ride.ended)return;const s=curStep();ride.elapsed=ride.starts[ride.idx]+s.d+.01;rideTick()}
+function finishRide(){
+  const r=ride;r.ended=true;clearInterval(tick);try{wakeLock&&wakeLock.release()}catch(e){}
+  send(SC.fluid(2),'Økt ferdig: lett motstand');
+  document.querySelectorAll('#ride .ctrl button,#ride .adj button').forEach(b=>b.disabled=true);
+  const ws=r.samples.filter(x=>x.w>0),sec=Math.round(Math.min(r.elapsed,r.total));
+  const avg=ws.length?Math.round(ws.reduce((a,x)=>a+x.w,0)/ws.length):0;
+  const kj=Math.round(r.samples.reduce((a,x)=>a+x.w,0)/1000); // 1 sample = 1 s
+  const cads=r.samples.filter(x=>x.c>0),cad=cads.length?Math.round(cads.reduce((a,x)=>a+x.c,0)/cads.length):0;
+  const mx=r.samples.reduce((a,x)=>Math.max(a,x.w),0);
+  let testHtml='',newFtp=0;
+  if(r.w.test){const ti=r.w.steps.findIndex(s=>s.test);const ts=r.samples.filter(x=>x.i===ti&&x.w>0);
+    if(ts.length>=r.w.steps[ti].d*0.9){const a20=ts.reduce((a,x)=>a+x.w,0)/ts.length;newFtp=Math.round(a20*0.95);
+      testHtml=`<p>20-minuttersdraget: snitt <strong class="num">${Math.round(a20)} W</strong>. Estimert FTP (×0,95): <strong class="num">${newFtp} W</strong>.</p><button class="btn primary" id="useFtp">Bruk ${newFtp} W som FTP</button>`}
+    else testHtml=`<p class="note">20-minuttersdraget ble ikke fullført, så FTP er ikke beregnet.</p>`}
+  const S2=$('rSummary');S2.hidden=false;
+  S2.innerHTML=`<h2>Ferdig</h2><div class="metrics"><div class="metric"><div class="v num">${Math.round(sec/60)}</div><div class="u">min</div></div><div class="metric"><div class="v num">${avg}</div><div class="u">snitt W</div></div><div class="metric"><div class="v num">${kj}</div><div class="u">kJ</div></div><div class="metric"><div class="v num">${cad}</div><div class="u">snitt rpm</div></div></div><p class="small muted">Maks ${mx} W.</p>${testHtml}<button class="btn" id="closeRide">Lukk</button>`;
+  if(sec>=60){const h=store.get('hist',[]);h.unshift({at:Date.now(),name:r.w.name,sec,avg,kj});store.set('hist',h.slice(0,50))}
+  if(r.planKey&&sec>=r.total*0.9){const d=store.get('done',{});d[r.planKey]=true;store.set('done',d)}
+  const u=$('useFtp');if(u)u.onclick=()=>{store.set('ftp',newFtp);$('ftp').value=newFtp;renderZones();renderWorkouts();toast('FTP satt til '+newFtp+' W')};
+  $('closeRide').onclick=()=>{$('ride').hidden=true;ride=null;renderPlan()};
+}
+
+// ---------- wire up ----------
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+$('dMinus').onclick=()=>nudge(-1);$('dPlus').onclick=()=>nudge(1);
+$('dRange').oninput=e=>{mval[mmode]=Number(e.target.value);showVal();store.set('mval',mval)};
+$('btnApply').onclick=applyManual;
+$('btnConnect').onclick=connect;$('btnDemo').onclick=startDemo;
+$('btnCal').onclick=()=>{if(!ctl&&!demo){toast('Koble til rullen først');return}send(SC.calibrate(true,false),'Start kalibrering');$('calText').textContent='Status: starter …'};
+$('btnCalStop').onclick=()=>send(SC.calibrate(false),'Stopp kalibrering');
+$('btnFtpSave').onclick=()=>{const v=Math.round(Number($('ftp').value));if(!(v>=60&&v<=600)){toast('FTP må være mellom 60 og 600 W');return}store.set('ftp',v);renderZones();renderWorkouts();toast('FTP lagret')};
+$('bAdd').onclick=()=>{bSteps.push({min:5,p:75});renderBuilder()};$('bSave').onclick=saveBuilder;
+$('btnClearHist').onclick=()=>{store.set('hist',[]);renderPlan()};
+$('rUp').onclick=()=>adjust(1);$('rDown').onclick=()=>adjust(-1);
+$('rPause').onclick=togglePause;$('rSkip').onclick=skip;
+$('rStop').onclick=()=>{$('rConfirm').hidden=false};$('rStopNo').onclick=()=>{$('rConfirm').hidden=true};
+$('rStopYes').onclick=()=>{$('rConfirm').hidden=true;finishRide()};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&ride&&!ride.ended)keepAwake()});
+
+$('ftp').value=ftp();if(!navigator.bluetooth)$('noBt').hidden=false;
+setMode('erg');renderZones();renderWorkouts();renderBuilder();showTab(store.get('tab','rulle'));
+</script>
